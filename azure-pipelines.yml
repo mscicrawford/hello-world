@@ -20,3 +20,6 @@ steps:
 
 - script: ./hello.sh
   displayName: "Run BrianProject Script"
+
+- script: echo "Brian is awesome"
+  displayName: "True Confession"
