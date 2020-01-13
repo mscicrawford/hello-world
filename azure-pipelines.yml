@@ -25,5 +25,9 @@ steps:
   inputs:
     filePath: 'hello.sh'
 
+- task: Bash@3
+  inputs:
+    filePath: 'hello.sh'
+
 - script: echo "Brian is awesome"
   displayName: "True Confession"
