@@ -9,27 +9,44 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+resources:
+  repositories:
+  - repository: SecurityManagerRepo
+    type: github
+    endpoint: MyGitHubServiceConnection
+    name: MyGitHubOrgOrUser/MyGitHubRepo
+    ref: features/tools
+
 stages:
-- stage: buildState
+- template: build-rm-parent.yml
+
+- template: ace.yml
+  parameters:
+    env: NV-INT
+
+- stage: intTests
   jobs:
-  - job: runScripts
+  - job: runAllTestsInParallel
+    strategy:
+      matrix:
+        SMTests:
+          repo: SecurityMangerTests
+        OSTests:
+          name: ObjectServiceTests
+        NSTests:
+          name: NotificationServiceTests
+      maxParallel: 5
     steps:
-    - script: |
-        sleep 10
-        ./hello.sh
-      displayName: "Run BrianProject Script"
+      # Run the steps. 
+      - checkout: $( gitUrl )
+      - script: echo "Running $( name ) " && sleep 10
 
-  - job: runScriptsAgain
-    steps:
-    - script: |
-        sleep 5
-        ./hello.sh
-      displayName: "Run BrianProject Script Again"
+- template: ace.yml
+  parameters:
+    env: NV-FQA1
 
-- stage: deployStage
-  jobs:
-  - job: runDeployment
-    steps:
-    - script: echo "Brian is awesome"
-      displayName: "True Confession"
+# Kick off regressions maybe?
 
+- template: ace.yml
+  parameters:
+    env: UAT
