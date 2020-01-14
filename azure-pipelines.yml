@@ -9,14 +9,27 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- script: ./hello.sh
-  displayName: "Run BrianProject Script"
+stages:
+- stage: buildState
+  jobs:
+  - job: runScripts
+    steps:
+    - script: |
+        sleep 10
+        ./hello.sh
+      displayName: "Run BrianProject Script"
 
-- task: Bash@3
-  displayName: "Run BrianProject As a Bash Script"
-  inputs:
-    filePath: 'hello.sh'
+  - job: runScriptsAgain
+    steps:
+    - script: |
+        sleep 5
+        ./hello.sh
+      displayName: "Run BrianProject Script Again"
 
-- script: echo "Brian is awesome"
-  displayName: "True Confession"
+- stage: deployStage
+  jobs:
+  - job: runDeployment
+    steps:
+    - script: echo "Brian is awesome"
+      displayName: "True Confession"
+
